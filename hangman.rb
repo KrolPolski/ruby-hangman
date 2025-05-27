@@ -1,5 +1,5 @@
 require 'colorize'
-require_relative 'board.rb'
+require_relative 'board'
 class Hangman
   def initialize
     @word_bank = []
@@ -9,7 +9,7 @@ class Hangman
   end
 
   def greet
-    puts "Welcome to Hangman!".light_yellow
+    puts 'Welcome to Hangman!'.light_yellow
   end
 
   def load_words
@@ -18,20 +18,15 @@ class Hangman
     until word.nil?
       @word_bank.push(word)
       word = word_file.gets
-      if word
-        word = word.chomp
-      end
+      word = word.chomp if word
     end
-    #puts @word_bank
   end
+
   def choose_word
     word = @word_bank.sample
-    until word.length >= 5 && word.length <= 12
-      word = @word_bank.sample
-    end
-    #puts word
-    return word
+    word = @word_bank.sample until word.length >= 5 && word.length <= 12
+    word
   end
 end
 
-game = Hangman.new;
+Hangman.new
