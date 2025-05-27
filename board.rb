@@ -1,4 +1,5 @@
 require 'io/console'
+require 'yaml'
 class Board
   def initialize(word)
     @word = word.downcase
@@ -52,7 +53,9 @@ class Board
         puts "\nGoodbye!"
         exit
       elsif char == "\u0013"
-        puts "Saving a game is for wimps."
+        save_game
+      elsif char == "\f"
+        load_game
       else
         puts "#{char} isn't a letter. What are you trying to pull?"
       end
@@ -72,5 +75,37 @@ class Board
     @failure_log.push(char)
     puts "\nWRONG! '#{char}' is not on the board! You have failed #{@failures} times so far.".red
     false
+  end
+  def save_game
+    save_file = open('hangman.sav', 'w+')
+    save_data = YAML.dump({
+      :word => @word,
+      :guess => @guess,
+      :failures => @failures,
+      :failure_log => @failure_log,
+      :guess_log => @guess_log,
+      :game_over => @game_over
+    })
+    save_file.puts save_data
+    save_file.close
+    puts "\nGame saved."
+  end
+  def load_game
+    save_file = 'hangman.sav'
+    unless File.exist?(save_file) && !File.zero?(save_file)
+      puts "\nNo saved game to load!"
+      return nil
+    end
+    puts "\nGame loading."
+    save_file = 'hangman.sav'
+    save_data = YAML.unsafe_load_file(save_file, symbolize_names: true)
+    @word = save_data[:word]
+    @guess = save_data[:guess]
+    @failures = save_data[:failures]
+    @failure_log = save_data[:failure_log]
+    @guess_log = save_data[:guess_log]
+    @game_over = save_data[:game_over]
+    puts "\nGame loaded."
+    draw_board
   end
 end
