@@ -77,6 +77,7 @@ class Board
     false
   end
   def save_game
+    begin
     save_file = open('hangman.sav', 'w+')
     save_data = YAML.dump({
       :word => @word,
@@ -89,6 +90,13 @@ class Board
     save_file.puts save_data
     save_file.close
     puts "\nGame saved."
+    rescue Errno::EACCES => e
+      puts "\nError: Cannot save game. #{e.message}"
+    rescue IOError => e
+      puts "\nError: Could not write to file. #{e.message}"
+    rescue StandardError => e
+      puts "\nUnexpected error saving game: #{e.message}"
+    end
   end
   def load_game
     save_file = 'hangman.sav'
