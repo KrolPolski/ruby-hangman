@@ -29,7 +29,7 @@ class Hangman
     until word.length >= 5 && word.length <= 12
       word = @word_bank.sample
     end
-    puts word
+    #puts word
     return word
   end
 end

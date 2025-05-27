@@ -3,7 +3,7 @@ class Board
   def initialize(word)
     @word = word.downcase
     @game_over = false
-    puts "Welcome to Board! the word is #{@word}"
+    #puts "Welcome to Board! the word is #{@word}"
     @failures = 0
     @guess_log = []
     @guess = Array.new(word.length, '_')
@@ -12,22 +12,22 @@ class Board
       make_guess
       draw_board
       if @failures >= 10 
-        puts 'You lose!'
+        puts "\nYou lose! the word was '#{@word}'".red
         @game_over = true
       elsif 
         @guess.include?('_') == false
         @game_over = true
-        puts 'You win!'
+        puts "\nYou win!".light_yellow
       end
     end
   end
   def draw_board
-    puts "You have #{@failures} wrong guesses so far. You lose if you hit 10 wrong guesses"
+    puts "\nYou have #{@failures} wrong guesses so far. You lose if you hit 10 wrong guesses\n\n"
     p @guess.join
   end
   def make_guess
     valid_guess = false
-    puts "What letter would you like to guess?"
+    puts "\nWhat letter would you like to guess?"
     Signal.trap("INT") do
       puts "\nGoodbye!"
       exit
@@ -35,7 +35,7 @@ class Board
     until valid_guess do
       char = STDIN.getch
       if char =~ /[a-zA-Z]/
-        puts "\nYou pressed: #{char} woo"
+        puts "\nYou typed: #{char}"
         char = char.downcase
         if @guess_log.include?(char) == false
           valid_guess = true
@@ -59,9 +59,11 @@ class Board
           @guess[index] = char
         end
       end
+      puts "\nCORRECT! #{char} is indeed part of this word!".green
       return true
     end
     @failures += 1
+    puts "\nWRONG! #{char} is not on the board! You have failed #{@failures} times so far.".red
     false
   end
 end
