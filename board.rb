@@ -3,26 +3,30 @@ class Board
   def initialize(word)
     @word = word.downcase
     @game_over = false
-    #puts "Welcome to Board! the word is #{@word}"
+    puts "\n You can save by pressing CTRL-S at any time."
     @failures = 0
+    @failure_log = []
     @guess_log = []
     @guess = Array.new(word.length, '_')
     draw_board
+    game_loop
+  end
+  def game_loop
     until @game_over
       make_guess
       draw_board
       if @failures >= 10 
         puts "\nYou lose! the word was '#{@word}'".red
         @game_over = true
-      elsif 
-        @guess.include?('_') == false
+      elsif @guess.include?('_') == false
         @game_over = true
         puts "\nYou win!".light_yellow
       end
     end
   end
   def draw_board
-    puts "\nYou have #{@failures} wrong guesses so far. You lose if you hit 10 wrong guesses\n\n"
+    puts "\nYou have #{@failures} wrong guesses so far. You lose if you hit 10 wrong guesses.\n\n"
+    puts "Wrong answer collection: #{@failure_log}"
     p @guess.join
   end
   def make_guess
@@ -47,6 +51,8 @@ class Board
       elsif char == "\u0003" || char.ord == 3
         puts "\nGoodbye!"
         exit
+      elsif char == "\u0013"
+        puts "Saving a game is for wimps."
       else
         puts "#{char} isn't a letter. What are you trying to pull?"
       end
@@ -59,11 +65,12 @@ class Board
           @guess[index] = char
         end
       end
-      puts "\nCORRECT! #{char} is indeed part of this word!".green
+      puts "\nCORRECT! '#{char}' is indeed part of this word!".green
       return true
     end
     @failures += 1
-    puts "\nWRONG! #{char} is not on the board! You have failed #{@failures} times so far.".red
+    @failure_log.push(char)
+    puts "\nWRONG! '#{char}' is not on the board! You have failed #{@failures} times so far.".red
     false
   end
 end
